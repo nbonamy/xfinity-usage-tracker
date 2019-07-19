@@ -38,7 +38,10 @@ If you use a gmail account, you can only setup `XFINITY_SMTP_USER` and `XFINITY_
 
 ### Tracking spreadsheet
 ![google spreadsheet](img/gsheet.jpg?s=200)
-To automatically update the tracking spreadsheet, first make a copy of the template spreadsheet in your drive. You need then to enable API access to this copy. Please follow the instructions here: [https://www.twilio.com/blog/2017/02/an-easy-way-to-read-and-write-to-a-google-spreadsheet-in-python.html](https://www.twilio.com/blog/2017/02/an-easy-way-to-read-and-write-to-a-google-spreadsheet-in-python.html). Save the JSON credentials as `client_secret.json` in the same folder as the script. Do not forget to share the spreadsheet with the email address specified in `client_secret.json` (`client_email` key).
+To automatically update the tracking spreadsheet, first make a copy of the [template spreadsheet](https://docs.google.com/spreadsheets/d/1C4NNB7uSvAbXX88VShNjBSX9tU8RvppEFeqtwAI-nkc/edit?usp=sharing) in your Google Drive.
+
+You then need then to enable API access to this copy. Please follow the instructions here: [https://www.twilio.com/blog/2017/02/an-easy-way-to-read-and-write-to-a-google-spreadsheet-in-python.html](https://www.twilio.com/blog/2017/02/an-easy-way-to-read-and-write-to-a-google-spreadsheet-in-python.html). Save the JSON credentials as `client_secret.json` in the same folder as the script. Do not forget to share the spreadsheet with the email address specified in `client_secret.json` (`client_email` key).
+
 Once this is done, you need to define the following configuration:
 
  - `XFINITY_GSHEET`: id of your Google spreadsheet. You can extract that from the URL displayed by your browser when you view the file. If the URL is `https://docs.google.com/spreadsheets/d/abcd8673ef/edit#gid=0` then the ID is `abcd8673ef`.
