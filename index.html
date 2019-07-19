@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="0; url=xfinity-usage.py">
+  <link rel="shortcut icon" href="https://static.cimcontent.net/common-web-assets/favicon/favicon.ico">
+  <title>Xfinity Usage Collector</title>
+  <style>
+    body {
+      font-family: -apple-system,Roboto,"Segoe UI",Helvetica,Arial,sans-serif;
+      text-align: center;
+      margin: 64px 128px;
+    }
+    .loading .one {
+      opacity: 0;
+      -webkit-animation: dot 1.3s infinite;
+      -webkit-animation-delay: 0.0s;
+      animation: dot 1.3s infinite;
+      animation-delay: 0.0s;
+    }
+    .loading .two {
+      opacity: 0;
+      -webkit-animation: dot 1.3s infinite;
+      -webkit-animation-delay: 0.2s;
+      animation: dot 1.3s infinite;
+      animation-delay: 0.2s;
+    }
+    .loading .three {
+      opacity: 0;
+      -webkit-animation: dot 1.3s infinite;
+      -webkit-animation-delay: 0.3s;
+      animation: dot 1.3s infinite;
+      animation-delay: 0.3s;
+    }
+    @-webkit-keyframes dot {
+          0% { opacity: 0; }
+        50% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+    @keyframes dot {
+          0% { opacity: 0; }
+        50% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <h2>Getting data from Xfinity</h2>
+  <div class="loading">This can take some time<span class="one">.</span><span class="two">.</span><span class="three">.</span></div>
+</body>
+</html>
