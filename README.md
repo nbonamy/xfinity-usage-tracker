@@ -37,7 +37,7 @@ Configuration values are:
 If you use a gmail account, you can only setup `XFINITY_SMTP_USER` and `XFINITY_SMTP_PASS`. All other parameters will be set automatically. It is recommended to generate an App Password ([https://myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)).
 
 ### Tracking spreadsheet
-![google spreadsheet](doc/gsheet.png)
+![google spreadsheet](img/gsheet.jpg?s=200)
 To automatically update the tracking spreadsheet, first make a copy of the template spreadsheet in your drive. You need then to enable API access to this copy. Please follow the instructions here: [https://www.twilio.com/blog/2017/02/an-easy-way-to-read-and-write-to-a-google-spreadsheet-in-python.html](https://www.twilio.com/blog/2017/02/an-easy-way-to-read-and-write-to-a-google-spreadsheet-in-python.html). Save the JSON credentials as `client_secret.json` in the same folder as the script. Do not forget to share the spreadsheet with the email address specified in `client_secret.json` (`client_email` key).
 Once this is done, you need to define the following configuration:
 
