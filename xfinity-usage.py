@@ -1,4 +1,4 @@
-#!C:\Program Files\Python37\Python.exe
+#/usr/bin/env python3
 import os
 import ssl
 import json
