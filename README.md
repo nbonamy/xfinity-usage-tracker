@@ -51,4 +51,4 @@ You can use your favorite scheduler (cron or Windows Task Scheduler) to automati
 
 ## As a webserver
 Configuring your favorite webserver (Apache or Nginx) is not documented here. You need to run the script as a CGI script.
-As the process, can take some time a waiting page (`index.html`) is provided.
+As the process can take some time, a waiting page (`index.html`) is provided.
