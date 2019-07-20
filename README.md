@@ -16,7 +16,8 @@ Dependencies can be installed using
     pip install -r requirements.txt
 
 ## Setup
-The script requires a number of configuration values to be defined. You can define them as environment variables or in a JSON configuration file. It should be named `config.json` and placed in the same folder as the script.
+The script requires a number of configuration values to be defined. You can define them as environment variables or in a JSON configuration file. It should be named `config.json` and placed in the same folder as the script. You can use `config-sample.json` as as starting point.
+
 ### Xfinity data collection
 Xfinity data collection requires two variables:
 
@@ -25,6 +26,7 @@ Xfinity data collection requires two variables:
 
 ### Mail alert
 The script can alert you if your data usage is above a certain threshold of what it should be. For instance, if your data cap is 1024 GB, and today is half month, you should have used no more than 512 GB. The script can alert you if you used more than 90% (can be changed) of those 512 GB so far.
+
 Configuration values are:
 
  - `XFINITY_SMTP_HOST`: Hostname of your SMTP server
