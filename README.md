@@ -13,7 +13,7 @@ This tool tracks your Xfinity usage and:
 
 Dependencies can be installed using
 
-    pip install -r requirements.txt
+    pip3 install -r requirements.txt
 
 ## Setup
 The script requires a number of configuration values to be defined. You can define them as environment variables or in a JSON configuration file. It should be named `config.json` and placed in the same folder as the script. You can use `config-sample.json` as as starting point.
