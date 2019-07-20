@@ -8,7 +8,8 @@ This tool tracks your Xfinity usage and:
 
  - Python3
  - xfinity-usage ([https://github.com/jantman/xfinity-usage](https://github.com/jantman/xfinity-usage))
-- gspread ([https://github.com/burnash/gspread](https://github.com/burnash/gspread))
+ - oauth2client ([https://github.com/googleapis/oauth2client](https://github.com/googleapis/oauth2client))
+ - gspread ([https://github.com/burnash/gspread](https://github.com/burnash/gspread))
 
 Dependencies can be installed using
 
@@ -38,7 +39,7 @@ If you use a gmail account, you can only setup `XFINITY_SMTP_USER` and `XFINITY_
 
 ### Tracking spreadsheet
 ![google spreadsheet](img/gsheet.jpg?s=200)
-To automatically update the tracking spreadsheet, first make a copy of the [template spreadsheet](https://docs.google.com/spreadsheets/d/1C4NNB7uSvAbXX88VShNjBSX9tU8RvppEFeqtwAI-nkc/edit?usp=sharing) in your Google Drive.
+To automatically update the tracking spreadsheet, first make a copy of the [template spreadsheet](https://docs.google.com/spreadsheets/d/1qOlky2kmSPPd09E3s1AzVnfBIbZUpi5MOuvAiip2MWs) in your Google Drive.
 
 You then need then to enable API access to this copy. Please follow the instructions here: [https://www.twilio.com/blog/2017/02/an-easy-way-to-read-and-write-to-a-google-spreadsheet-in-python.html](https://www.twilio.com/blog/2017/02/an-easy-way-to-read-and-write-to-a-google-spreadsheet-in-python.html). Save the JSON credentials as `client_secret.json` in the same folder as the script. Do not forget to share the spreadsheet with the email address specified in `client_secret.json` (`client_email` key).
 
@@ -51,4 +52,4 @@ You can use your favorite scheduler (cron or Windows Task Scheduler) to automati
 
 ## As a webserver
 Configuring your favorite webserver (Apache or Nginx) is not documented here. You need to run the script as a CGI script.
-As the process, can take some time a waiting page (`index.html`) is provided.
+As the process can take some time, a waiting page (`index.html`) is provided.
