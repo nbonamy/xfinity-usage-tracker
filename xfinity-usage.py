@@ -52,7 +52,7 @@ def getConfigValue(name, default=False):
 	if not value and default:
 		value = default
 	return value
-	
+
 # get context
 isCgi = 'GATEWAY_INTERFACE' in os.environ
 xfinityUser = getConfigValue(XFINITY_USER)
@@ -89,7 +89,7 @@ if not xfinityUser or not xfinityPass:
 # get the data
 log.info('Getting usage data from xfinity')
 #usageData = { JSON_CAP: 1024, JSON_USAGE: 482, JSON_NOW: int(time.time()) }
-#usageData = json.load(open('sample.json'))
+#usageData = json.load(open('data/sample.json'))
 xfinityUsage = XfinityUsage(xfinityUser, xfinityPass, browser_name=xfinityBrowser)
 usageData = xfinityUsage.run()
 
@@ -197,7 +197,7 @@ if month != historyMonth:
 	for d in range(1,32):
 		historySheet.update_cell(d + HIST_START_ROW - 1, HIST_START_COL, '')
 	historySheet.update_acell(HIST_MONTH_CELL, month)
-	
+
 # now update daily value if not done yet
 # when run on first day of month this does not make sense as monthly usage has just been reset to 0
 # so we cannot even record usage as of last day of previous month...
