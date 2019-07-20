@@ -13,7 +13,7 @@ from xfinity_usage.xfinity_usage import XfinityUsage
 from oauth2client.service_account import ServiceAccountCredentials
 
 # some constants
-CONFIG_FILE = "config.json"
+CONFIG_FILE = 'config.json'
 XFINITY_USER = 'XFINITY_USER'
 XFINITY_PASS = 'XFINITY_PASS'
 XFINITY_BROWSER = 'XFINITY_BROWSER'
