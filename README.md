@@ -8,7 +8,8 @@ This tool tracks your Xfinity usage and:
 
  - Python3
  - xfinity-usage ([https://github.com/jantman/xfinity-usage](https://github.com/jantman/xfinity-usage))
-- gspread ([https://github.com/burnash/gspread](https://github.com/burnash/gspread))
+ - oauth2client ([https://github.com/googleapis/oauth2client](https://github.com/googleapis/oauth2client))
+ - gspread ([https://github.com/burnash/gspread](https://github.com/burnash/gspread))
 
 Dependencies can be installed using
 
