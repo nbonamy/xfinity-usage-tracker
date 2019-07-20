@@ -1,0 +1,3 @@
+*.log
+config.json
+client_secret.json

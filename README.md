@@ -50,7 +50,7 @@ Once this is done, you need to define the following configuration:
  - `XFINITY_GSHEET`: id of your Google spreadsheet. You can extract that from the URL displayed by your browser when you view the file. If the URL is `https://docs.google.com/spreadsheets/d/abcd8673ef/edit#gid=0` then the ID is `abcd8673ef`.
 
 ## Scheduling
-You can use your favorite scheduler (cron or Windows Task Scheduler) to automatically launch the script. It is recommended to run it once a day around 1am but you can run it more often if desired. Please check the disclaimer on [https://github.com/jantman/xfinity-usage](https://github.com/jantman/xfinity-usage): it is also valid for xfinity-usage-tracker.
+You can use your favorite scheduler (cron or Windows Task Scheduler) to automatically launch the script. It is recommended to run it once a day around 3am: this way the script will record the usage of the day before in the spreasheet (there is some delay in Comcast update of your usage). If you decide to run it more often, please check the disclaimer on [https://github.com/jantman/xfinity-usage](https://github.com/jantman/xfinity-usage): it is also valid for xfinity-usage-tracker.
 
 ## As a webserver
 Configuring your favorite webserver (Apache or Nginx) is not documented here. You need to run the script as a CGI script.
