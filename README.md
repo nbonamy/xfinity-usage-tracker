@@ -12,9 +12,11 @@ This tool tracks your Xfinity usage and:
  - oauth2client ([https://github.com/googleapis/oauth2client](https://github.com/googleapis/oauth2client))
  - gspread ([https://github.com/burnash/gspread](https://github.com/burnash/gspread))
 
-Python 3 dependencies can be installed using
+jantman is the original author of xfinity-usage but xfinity-usage uses a slightly modified version: [https://github.com/nbonamy/xfinity-usage](https://github.com/nbonamy/xfinity-usage).
 
-    pip3 install -r requirements.txt
+Python dependencies can be installed using
+
+    pip install -r requirements.txt
 
 Chromedriver must be installed manually and available in your PATH.
 
@@ -59,7 +61,7 @@ Once this is done, you need to define the following configuration:
  - `XFINITY_GSHEET`: id of your Google spreadsheet. You can extract that from the URL displayed by your browser when you view the file. If the URL is `https://docs.google.com/spreadsheets/d/abcd8673ef/edit#gid=0` then the ID is `abcd8673ef`.
 
 ## Scheduling
-You can use your favorite scheduler (cron or Windows Task Scheduler) to automatically launch the script. It is recommended to run it once a day around 3am: this way the script will record the usage of the day before in the spreasheet (there is some delay in Comcast update of your usage). If you decide to run it more often, please check the disclaimer on [https://github.com/jantman/xfinity-usage](https://github.com/jantman/xfinity-usage): it is also valid for xfinity-usage-tracker.
+You can use your favorite scheduler (cron or Windows Task Scheduler) to automatically launch the script. If you want to track usage for each calendar day, then at least schedule it to run at 11.55pm (although there is some delay in Comcast update of your usage). It is recommended to run it only once a day: if you decide to run it more often, please check the disclaimer on [https://github.com/jantman/xfinity-usage](https://github.com/jantman/xfinity-usage): it is also valid for xfinity-usage-tracker.
 
 ## As a webserver
 Configuring your favorite webserver (Apache or Nginx) is not documented here. You need to run the script as a CGI script.

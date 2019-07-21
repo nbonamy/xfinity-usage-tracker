@@ -93,6 +93,8 @@ def finish(args, usageData, sheetUrl):
 	elif not isCgi and sheetUrl:
 		webbrowser.open_new_tab(gSheetUrl)
 
+	# done
+	log.info('Done!')
 	exit()
 
 # parse args
@@ -152,67 +154,64 @@ log.info('Monthly cap = {0} GB'.format(capValue))
 now = datetime.datetime.fromtimestamp(usageData[JSON_NOW])
 year = now.year
 month = now.month
-day = now.day - 1
+day = now.day
 hour = now.hour
 minute = now.minute
-now = round(day + (hour * 60 + minute) / (24 * 60), 2)
-log.info('Date = {}/{:02d}/{:02d} {:02d}:{:02d}'.format(year,month, day+1, hour, minute))
+now = round((day - 1) + (hour * 60 + minute) / (24 * 60), 2)
+log.info('Date = {}/{:02d}/{:02d} {:02d}:{:02d}'.format(year,month, day, hour, minute))
 log.info('Now = {0}'.format(now))
 
 # if warning enabled calc target and compare
-if day == 0:
-	log.info('Current usage = {0}. Fisrt day of month: skipping over usage check'.format(usedData))
-else:
-	days = monthrange(year, month)[1]
-	targetData = int(capValue) / days * now
-	log.info('Current usage = {0}, target = {1}, threshold={2}'.format(usedData, targetData, targetData * warnThreshold))
-	if usedData > targetData * warnThreshold:
-		smtpUser = getConfigValue(args, XFINITY_SMTP_USER)
-		warnEmailTo = getConfigValue(args, XFINITY_EMAIL_TO) or smtpUser
-		if not warnEmailTo:
-			log.warn('Mail disabled: no recipient email setup')
+days = monthrange(year, month)[1]
+targetData = int(capValue) / days * now
+log.info('Current usage = {0}, target = {1}, threshold={2}'.format(usedData, targetData, targetData * warnThreshold))
+if usedData > targetData * warnThreshold:
+	smtpUser = getConfigValue(args, XFINITY_SMTP_USER)
+	warnEmailTo = getConfigValue(args, XFINITY_EMAIL_TO) or smtpUser
+	if not warnEmailTo:
+		log.warn('Mail disabled: no recipient email setup')
+	else:
+
+		smtpHost = getConfigValue(args, XFINITY_SMTP_HOST) or SMTP_GMAIL if smtpUser.endswith('@gmail.com') else ''
+		if not smtpHost:
+			log.warn('Should warn but SMTP host not defined')
 		else:
 
-			smtpHost = getConfigValue(args, XFINITY_SMTP_HOST) or SMTP_GMAIL if smtpUser.endswith('@gmail.com') else ''
-			if not smtpHost:
-				log.warn('Should warn but SMTP host not defined')
-			else:
-
-				try:
-					# connect to smtp server
-					smtpPort = getConfigValue(args, XFINITY_SMTP_PORT)
-					smtpPort = int(smtpPort) if smtpPort else (SMTP_PORT_SSL if smtpHost == SMTP_GMAIL else SMTP_PORT)
-					log.debug('SMTP: Connecting to server {}:{}'.format(smtpHost, smtpPort))
-					server = smtplib.SMTP_SSL(smtpHost, smtpPort)
+			try:
+				# connect to smtp server
+				smtpPort = getConfigValue(args, XFINITY_SMTP_PORT)
+				smtpPort = int(smtpPort) if smtpPort else (SMTP_PORT_SSL if smtpHost == SMTP_GMAIL else SMTP_PORT)
+				log.debug('SMTP: Connecting to server {}:{}'.format(smtpHost, smtpPort))
+				server = smtplib.SMTP_SSL(smtpHost, smtpPort)
+				server.ehlo()
+				if smtpPort == SMTP_PORT_TLS:
+					log.debug('SMTP: Enabling TLS')
+					server.starttls()
 					server.ehlo()
-					if smtpPort == SMTP_PORT_TLS:
-						log.debug('SMTP: Enabling TLS')
-						server.starttls()
-						server.ehlo()
-					if smtpUser:
-						log.debug('SMTP: Authenticating')
-						server.login(smtpUser, getConfigValue(args, XFINITY_SMTP_PASS))
+				if smtpUser:
+					log.debug('SMTP: Authenticating')
+					server.login(smtpUser, getConfigValue(args, XFINITY_SMTP_PASS))
 
-					# build and send email
-					warnEmailFrom = getConfigValue(args, XFINITY_EMAIL_FROM) or warnEmailTo
-					emailText  = 'From: {0}\n'.format(warnEmailFrom)
-					emailText += 'To: {0}\n'.format(warnEmailTo)
-					emailText += 'Subject: Xfinity usage = {0:.0f} GB (target is {1:.0f} GB)\n\n'.format(usedData, targetData)
-					emailText += gSheetUrl if gSheetId else ''
-					server.sendmail(warnEmailFrom, warnEmailTo, emailText)
+				# build and send email
+				warnEmailFrom = getConfigValue(args, XFINITY_EMAIL_FROM) or warnEmailTo
+				emailText  = 'From: {0}\n'.format(warnEmailFrom)
+				emailText += 'To: {0}\n'.format(warnEmailTo)
+				emailText += 'Subject: Xfinity usage = {0:.0f} GB (target is {1:.0f} GB)\n\n'.format(usedData, targetData)
+				emailText += gSheetUrl if gSheetId else ''
+				server.sendmail(warnEmailFrom, warnEmailTo, emailText)
 
-					# done
-					server.close()
-					log.info('Warning mail sent')
+				# done
+				server.close()
+				log.info('Warning mail sent')
 
-				except Exception as e:
-					log.error(e)
-					pass
+			except Exception as e:
+				log.error(e)
+				pass
 
 # if we have no spreadsheet, simply output the json
 if not gSheetId:
+	log.info('No Google spreadsheet specified.')
 	finish(args, usageData, False)
-	exit()
 
 # use creds to create a client to interact with the Google Drive API
 log.info('Connecting to Google spreadsheet')
@@ -244,10 +243,8 @@ if month != historyMonth:
 # now update daily value if not done yet
 # when run on first day of month this does not make sense as monthly usage has just been reset to 0
 # so we cannot even record usage as of last day of previous month...
-if day > 0 and not historySheet.cell(day + HIST_START_ROW - 1, HIST_START_COL).value:
-	log.info('Updating history sheet')
-	historySheet.update_cell(day + HIST_START_ROW - 1, HIST_START_COL, usedData)
+log.info('Updating history sheet')
+historySheet.update_cell(day + HIST_START_ROW - 1, HIST_START_COL, usedData)
 
 # done
 finish(args, usageData, gSheetUrl)
-log.info('Done!')
