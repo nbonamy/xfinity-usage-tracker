@@ -1,11 +1,13 @@
 #/usr/bin/env python3
 import os
+import sys
 import ssl
 import json
 import time
 import gspread
 import smtplib
 import datetime
+import argparse
 import webbrowser
 import logging as log
 from calendar import monthrange
@@ -43,33 +45,78 @@ HIST_START_ROW = 4
 HIST_START_COL = 2
 
 # to get configuration
-def getConfigValue(name, default=False):
+def getConfigValue(args, name, default=False):
+
+	# first check args
+	if name in vars(args).keys():
+		value = vars(args)[name]
+		if value:
+			return value
+
+	# now environment variable
 	value = os.getenv(name)
-	if not value:
-		config = json.load(open(CONFIG_FILE))
-		if name in config:
-			value = config[name]
-	if not value and default:
-		value = default
-	return value
+	if value:
+		return value
+
+	# if not found look in config
+	config = json.load(open(CONFIG_FILE))
+	if name in config:
+		value = config[name]
+
+	# fallback to default
+	return value if value else default
+
+def parse_args(argv):
+	p = argparse.ArgumentParser(description='Track Xfinity data usage', prog='xfinity-usage-tracker')
+	p.add_argument('-d', '--debug', action='store_const', const=True, help='log debug traces')
+	p.add_argument('-j', '--json', action='store_const', const=True, help='display json')
+	p.add_argument('-u', '--username', dest='XFINITY_USER', action='store', help='Xfinity username')
+	p.add_argument('-p', '--password', dest='XFINITY_PASS', action='store', help='Xfinity password')
+	p.add_argument('-g', '--gsheet', dest='XFINITY_GSHEET', action='store', help='Google Spreasheet Id')
+	args = p.parse_args(argv)
+	return args
+
+def finish(args, usageData, sheetUrl):
+
+	# cgi requires header
+	if isCgi:
+		print('Status: 200 OK')
+		if args.json:
+			print('Content-Type: application/json')
+		elif sheetUrl:
+			print('Location: {0}'.format(sheetUrl))
+		print()
+
+	# now content
+	if args.json:
+		print(json.dumps(usageData))
+	elif not isCgi and sheetUrl:
+		webbrowser.open_new_tab(gSheetUrl)
+
+	exit()
+
+# parse args
+args = parse_args(sys.argv[1:])
 
 # get context
 isCgi = 'GATEWAY_INTERFACE' in os.environ
-xfinityUser = getConfigValue(XFINITY_USER)
-xfinityPass = getConfigValue(XFINITY_PASS)
-xfinityBrowser = getConfigValue(XFINITY_BROWSER)
-warnThreshold = getConfigValue(XFINITY_WARNING)
-gSheetId = getConfigValue(XFINITY_GSHEET)
+xfinityUser = getConfigValue(args, XFINITY_USER)
+xfinityPass = getConfigValue(args, XFINITY_PASS)
+xfinityBrowser = getConfigValue(args, XFINITY_BROWSER, 'chrome-headless')
+warnThreshold = getConfigValue(args, XFINITY_WARNING)
+gSheetId = getConfigValue(args, XFINITY_GSHEET)
 gSheetUrl = 'https://docs.google.com/spreadsheets/d/{0}'.format(gSheetId)
 
 # default
-xfinityBrowser = xfinityBrowser or 'chrome-headless'
 warnThreshold = 0.90 if not warnThreshold else float(warnThreshold)
 
 # logging: we need to remove handlers as xfinity-usage lib defined its own
 for handler in log.root.handlers[:]:
 	log.root.removeHandler(handler)
-log.basicConfig(filename='./xfinity-usage.log', filemode='w', level=log.INFO)
+
+# add our now
+logLevel = log.DEBUG if args.debug else log.INFO
+log.basicConfig(filename='./xfinity-usage.log', filemode='w', level=logLevel)
 
 # check
 if not xfinityUser or not xfinityPass:
@@ -109,7 +156,7 @@ day = now.day - 1
 hour = now.hour
 minute = now.minute
 now = round(day + (hour * 60 + minute) / (24 * 60), 2)
-log.info('Date = {}/{}/{} {}:{}'.format(year,month, day+1, hour, minute))
+log.info('Date = {}/{:02d}/{:02d} {:02d}:{:02d}'.format(year,month, day+1, hour, minute))
 log.info('Now = {0}'.format(now))
 
 # if warning enabled calc target and compare
@@ -120,20 +167,20 @@ else:
 	targetData = int(capValue) / days * now
 	log.info('Current usage = {0}, target = {1}, threshold={2}'.format(usedData, targetData, targetData * warnThreshold))
 	if usedData > targetData * warnThreshold:
-		smtpUser = getConfigValue(XFINITY_SMTP_USER)
-		warnEmailTo = getConfigValue(XFINITY_EMAIL_TO) or smtpUser
+		smtpUser = getConfigValue(args, XFINITY_SMTP_USER)
+		warnEmailTo = getConfigValue(args, XFINITY_EMAIL_TO) or smtpUser
 		if not warnEmailTo:
 			log.warn('Mail disabled: no recipient email setup')
 		else:
 
-			smtpHost = getConfigValue(XFINITY_SMTP_HOST) or SMTP_GMAIL if smtpUser.endswith('@gmail.com') else ''
+			smtpHost = getConfigValue(args, XFINITY_SMTP_HOST) or SMTP_GMAIL if smtpUser.endswith('@gmail.com') else ''
 			if not smtpHost:
 				log.warn('Should warn but SMTP host not defined')
 			else:
 
 				try:
 					# connect to smtp server
-					smtpPort = getConfigValue(XFINITY_SMTP_PORT)
+					smtpPort = getConfigValue(args, XFINITY_SMTP_PORT)
 					smtpPort = int(smtpPort) if smtpPort else (SMTP_PORT_SSL if smtpHost == SMTP_GMAIL else SMTP_PORT)
 					log.debug('SMTP: Connecting to server {}:{}'.format(smtpHost, smtpPort))
 					server = smtplib.SMTP_SSL(smtpHost, smtpPort)
@@ -144,10 +191,10 @@ else:
 						server.ehlo()
 					if smtpUser:
 						log.debug('SMTP: Authenticating')
-						server.login(smtpUser, getConfigValue(XFINITY_SMTP_PASS))
+						server.login(smtpUser, getConfigValue(args, XFINITY_SMTP_PASS))
 
 					# build and send email
-					warnEmailFrom = getConfigValue(XFINITY_EMAIL_FROM) or warnEmailTo
+					warnEmailFrom = getConfigValue(args, XFINITY_EMAIL_FROM) or warnEmailTo
 					emailText  = 'From: {0}\n'.format(warnEmailFrom)
 					emailText += 'To: {0}\n'.format(warnEmailTo)
 					emailText += 'Subject: Xfinity usage = {0:.0f} GB (target is {1:.0f} GB)\n\n'.format(usedData, targetData)
@@ -164,11 +211,7 @@ else:
 
 # if we have no spreadsheet, simply output the json
 if not gSheetId:
-	if isCgi:
-		print('Status: 200 OK')
-		print('Content-Type: application/json')
-		print()
-	print(json.dumps(usageData))
+	finish(args, usageData, False)
 	exit()
 
 # use creds to create a client to interact with the Google Drive API
@@ -205,12 +248,6 @@ if day > 0 and not historySheet.cell(day + HIST_START_ROW - 1, HIST_START_COL).v
 	log.info('Updating history sheet')
 	historySheet.update_cell(day + HIST_START_ROW - 1, HIST_START_COL, usedData)
 
-# redirect or open
-if isCgi:
-	print('Location: {0}'.format(gSheetUrl))
-	print()
-else:
-	webbrowser.open_new_tab(gSheetUrl)
-
 # done
+finish(args, usageData, gSheetUrl)
 log.info('Done!')

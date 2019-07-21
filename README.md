@@ -7,13 +7,16 @@ This tool tracks your Xfinity usage and:
 ## Requirements
 
  - Python3
+ - Chromedriver ([http://chromedriver.chromium.org/](http://chromedriver.chromium.org/))
  - xfinity-usage ([https://github.com/jantman/xfinity-usage](https://github.com/jantman/xfinity-usage))
  - oauth2client ([https://github.com/googleapis/oauth2client](https://github.com/googleapis/oauth2client))
  - gspread ([https://github.com/burnash/gspread](https://github.com/burnash/gspread))
 
-Dependencies can be installed using
+Python 3 dependencies can be installed using
 
     pip3 install -r requirements.txt
+
+Chromedriver must be installed manually and available in your PATH.
 
 ## Setup
 The script requires a number of configuration values to be defined. You can define them as environment variables or in a JSON configuration file. It should be named `config.json` and placed in the same folder as the script. You can use `config-sample.json` as as starting point.
