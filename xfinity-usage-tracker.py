@@ -116,7 +116,7 @@ for handler in log.root.handlers[:]:
 
 # add our now
 logLevel = log.DEBUG if args.debug else log.INFO
-log.basicConfig(filename='./xfinity-usage.log', filemode='w', level=logLevel)
+log.basicConfig(filename='./xfinity-usage-tracker.log', filemode='w', level=logLevel)
 
 # check
 if not xfinityUser or not xfinityPass:
