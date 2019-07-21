@@ -19,7 +19,13 @@ Python 3 dependencies can be installed using
 Chromedriver must be installed manually and available in your PATH.
 
 ## Setup
-The script requires a number of configuration values to be defined. You can define them as environment variables or in a JSON configuration file. It should be named `config.json` and placed in the same folder as the script. You can use `config-sample.json` as as starting point.
+The script requires a number of configuration values to be defined. You can define them as environment variables or in a JSON configuration file. It should be named `config.json` and placed in the same folder as the script. You can use `config-sample.json` as as starting point. Some of the configuration variables can be specified from the command line. Run with `--help` to learn about it.
+
+Configuration variables are loaded in the following order of priority:
+
+ - Command line arguments
+ - Environment variables
+ - Configuration file
 
 ### Xfinity data collection
 Xfinity data collection requires two variables:
