@@ -1,4 +1,5 @@
 *.log
+src
 launch.json
 config.json
 client_secret.json
