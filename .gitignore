@@ -1,3 +1,4 @@
 *.log
+launch.json
 config.json
 client_secret.json
