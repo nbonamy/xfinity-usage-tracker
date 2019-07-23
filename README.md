@@ -69,6 +69,8 @@ You can use your favorite scheduler (cron or Windows Task Scheduler) to automati
 Configuring your favorite webserver (Apache or Nginx) is not documented here. You need to run the script as a CGI script.
 As the process can take some time, a waiting page (`index.html`) is provided.
 
+You can also quickly check your usage by accessing `usage.html`. This page should display fine on your phone!
+
 ## Logging
 When run from the command line, you can force logging to a file with the `--log` option. When run as a CGI script, logging to file is always enabled.
 
