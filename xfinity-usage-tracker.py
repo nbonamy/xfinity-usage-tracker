@@ -69,6 +69,7 @@ def getConfigValue(args, name, default=False):
 
 def parse_args(argv):
 	p = argparse.ArgumentParser(description='Track Xfinity data usage', prog='xfinity-usage-tracker')
+	p.add_argument('-l', '--log', action='store_const', const=True, help='log to file')
 	p.add_argument('-d', '--debug', action='store_const', const=True, help='log debug traces')
 	p.add_argument('-j', '--json', action='store_const', const=True, help='display json')
 	p.add_argument('-o', '--offset', action='store', dest='XFINITY_OFFSET', default=0, help='time offset')
@@ -99,11 +100,22 @@ def finish(args, usageData, sheetUrl):
 	log.info('Done!')
 	exit()
 
-# parse args
-args = parse_args(sys.argv[1:])
-
 # get context
 isCgi = 'GATEWAY_INTERFACE' in os.environ
+args = parse_args(sys.argv[1:])
+
+# logging: we need to remove handlers as xfinity-usage lib defined its own
+for handler in log.root.handlers[:]:
+	log.root.removeHandler(handler)
+
+# add our now
+logLevel = log.DEBUG if args.debug else log.INFO
+if isCgi or args.log:
+	log.basicConfig(filename='./xfinity-usage-tracker.log', filemode='w', level=logLevel)
+else:
+	log.basicConfig(level=logLevel)
+
+# get config
 xfinityUser = getConfigValue(args, XFINITY_USER)
 xfinityPass = getConfigValue(args, XFINITY_PASS)
 xfinityOffset = int(getConfigValue(args, XFINITY_OFFSET, 0))
@@ -114,14 +126,6 @@ gSheetUrl = 'https://docs.google.com/spreadsheets/d/{0}'.format(gSheetId)
 
 # default
 warnThreshold = 0.90 if not warnThreshold else float(warnThreshold)
-
-# logging: we need to remove handlers as xfinity-usage lib defined its own
-for handler in log.root.handlers[:]:
-	log.root.removeHandler(handler)
-
-# add our now
-logLevel = log.DEBUG if args.debug else log.INFO
-log.basicConfig(filename='./xfinity-usage-tracker.log', filemode='w', level=logLevel)
 
 # check
 if not xfinityUser or not xfinityPass:
