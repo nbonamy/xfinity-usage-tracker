@@ -18,6 +18,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 CONFIG_FILE = 'config.json'
 XFINITY_USER = 'XFINITY_USER'
 XFINITY_PASS = 'XFINITY_PASS'
+XFINITY_OFFSET = 'XFINITY_OFFSET'
 XFINITY_BROWSER = 'XFINITY_BROWSER'
 XFINITY_GSHEET = 'XFINITY_GSHEET'
 XFINITY_WARNING = 'XFINITY_WARNING'
@@ -70,9 +71,10 @@ def parse_args(argv):
 	p = argparse.ArgumentParser(description='Track Xfinity data usage', prog='xfinity-usage-tracker')
 	p.add_argument('-d', '--debug', action='store_const', const=True, help='log debug traces')
 	p.add_argument('-j', '--json', action='store_const', const=True, help='display json')
-	p.add_argument('-u', '--username', dest='XFINITY_USER', action='store', help='Xfinity username')
-	p.add_argument('-p', '--password', dest='XFINITY_PASS', action='store', help='Xfinity password')
-	p.add_argument('-g', '--gsheet', dest='XFINITY_GSHEET', action='store', help='Google Spreasheet Id')
+	p.add_argument('-o', '--offset', action='store', dest='XFINITY_OFFSET', default=0, help='time offset')
+	p.add_argument('-u', '--username', action='store', dest='XFINITY_USER', help='Xfinity username')
+	p.add_argument('-p', '--password', action='store', dest='XFINITY_PASS', help='Xfinity password')
+	p.add_argument('-g', '--gsheet', action='store', dest='XFINITY_GSHEET', help='Google Spreasheet Id')
 	args = p.parse_args(argv)
 	return args
 
@@ -104,6 +106,7 @@ args = parse_args(sys.argv[1:])
 isCgi = 'GATEWAY_INTERFACE' in os.environ
 xfinityUser = getConfigValue(args, XFINITY_USER)
 xfinityPass = getConfigValue(args, XFINITY_PASS)
+xfinityOffset = int(getConfigValue(args, XFINITY_OFFSET, 0))
 xfinityBrowser = getConfigValue(args, XFINITY_BROWSER, 'chrome-headless')
 warnThreshold = getConfigValue(args, XFINITY_WARNING)
 gSheetId = getConfigValue(args, XFINITY_GSHEET)
@@ -150,8 +153,16 @@ usedData = usageData[JSON_USAGE]
 capValue = usageData[JSON_CAP]
 log.info('Monthly cap = {0} GB'.format(capValue))
 
-# get timestamp and extract some values
-now = datetime.datetime.fromtimestamp(usageData[JSON_NOW])
+# get timestamp
+jsonTimestamp = usageData[JSON_NOW]
+
+# offset
+if xfinityOffset != 0:
+	log.info('Offsetting timestamp by {0} hour(s)'.format(xfinityOffset))
+	jsonTimestamp = jsonTimestamp + xfinityOffset * 60 * 60
+
+# now get some value
+now = datetime.datetime.fromtimestamp(jsonTimestamp)
 year = now.year
 month = now.month
 day = now.day

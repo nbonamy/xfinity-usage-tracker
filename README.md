@@ -35,6 +35,8 @@ Xfinity data collection requires two variables:
  - `XFINITY_USER`: your Xfinity username
  - `XFINITY_PASS`: your Xfinity account password
 
+As Comcast takes some time to reflect your latest usage, you can choose to offset the timestamp of the usage collected. For instance, if you think Comcast numbers reflect your usage 4 hours ago, you can offset this using `XFINITY_OFFSET` with a value of `-4`. So for instance, if you run the script at 3am with this setting, the usage from the day before will be updated (3am minus four hours is 11pm from the previous day).
+
 ### Mail alert
 The script can alert you if your data usage is above a certain threshold of what it should be. For instance, if your data cap is 1024 GB, and today is half month, you should have used no more than 512 GB. The script can alert you if you used more than 90% (can be changed) of those 512 GB so far.
 
