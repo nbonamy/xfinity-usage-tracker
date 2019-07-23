@@ -65,6 +65,10 @@ Once this is done, you need to define the following configuration:
 ## Scheduling
 You can use your favorite scheduler (cron or Windows Task Scheduler) to automatically launch the script. If you want to track usage for each calendar day, then at least schedule it to run at 11.55pm (although there is some delay in Comcast update of your usage). It is recommended to run it only once a day: if you decide to run it more often, please check the disclaimer on [https://github.com/jantman/xfinity-usage](https://github.com/jantman/xfinity-usage): it is also valid for xfinity-usage-tracker.
 
-## As a webserver
+## Behind a webserver
 Configuring your favorite webserver (Apache or Nginx) is not documented here. You need to run the script as a CGI script.
 As the process can take some time, a waiting page (`index.html`) is provided.
+
+## Logging
+When run from the command line, you can force logging to a file with the `--log` option. When run as a CGI script, logging to file is always enabled.
+
