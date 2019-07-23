@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="css/main.css">
+  <title>Xfinity Usage</title>
+</head>
+<body>
+  
+  <h1>Xfinity Usage</h1>
+  <div class="loading">Loading data<span class="one">.</span><span class="two">.</span><span class="three">.</span></div>
+  <div id="gaugeArea"></div>
+  
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://unpkg.com/gauge-chart@latest/dist/bundle.js"></script>
+  <script>
+
+    $(document).ready(function() {
+
+      $.getJSON('xfinity-usage-grapher.py', function(data) {
+
+        // hide loading
+        $('.loading').hide();
+
+        // Element inside which you want to see the chart
+        let element = document.querySelector('#gaugeArea')
+
+        // Properties of the gauge
+        let gaugeOptions = {
+          hasNeedle: true,
+          needleColor: '#20639b',
+          needleUpdateSpeed: 1000,
+          arcColors: [ '#2dc937', '#e7b416', '#cc3232' ],
+          arcDelimiters: [ data.warning/data.cap*100, data.error/data.cap*100 ],
+          rangeLabel: [ '0', data.cap.toString() ],
+          centralLabel: data.usage + ' GB',
+          rangeLabelFontSize: 16
+        }
+
+        // Drawing and updating the chart
+        GaugeChart
+          .gaugeChart(element, 300, gaugeOptions)
+          .updateNeedle(data.usage/data.cap*100)
+
+      });
+
+    });
+  </script>
+</body>
+</html>
