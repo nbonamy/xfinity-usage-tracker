@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Xfinity Usage</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://unpkg.com/gauge-chart@latest/dist/bundle.js"></script>
+  <style>
+    body {{
+      font-family: -apple-system,Roboto,"Segoe UI",Helvetica,Arial,sans-serif;
+      text-align: center;
+      margin-top: 64px;
+    }}
+  </style>
+  </head>
+<body>
+  <h1>Xfinity Usage</h1>
+  <div id="gaugeArea"></div>
+  <script>
+    // Element inside which you want to see the chart
+    let element = document.querySelector('#gaugeArea')
+
+    // Properties of the gauge
+    let gaugeOptions = {{
+      hasNeedle: true,
+      needleColor: '#20639b',
+      needleUpdateSpeed: 1000,
+      arcColors: ['#2dc937', '#e7b416', '#cc3232'],
+      arcDelimiters: [{1},{2}],
+      rangeLabel: ['0', '{0}'],
+      centralLabel: '{4} GB',
+      rangeLabelFontSize: 16
+    }}
+
+    // Drawing and updating the chart
+    GaugeChart
+      .gaugeChart(element, window.innerWidth, gaugeOptions)
+      .updateNeedle({3})
+  </script>
+</body>
+</html>
