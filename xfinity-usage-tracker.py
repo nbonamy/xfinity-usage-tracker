@@ -32,7 +32,7 @@ def finish(args, usageData, sheetUrl):
 		if args.json:
 			print('Content-Type: application/json')
 		elif sheetUrl:
-			print('Location: {0}'.format(sheetUrl))
+			print('Location: usage.html')
 		print()
 
 	# now content
