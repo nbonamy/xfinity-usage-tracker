@@ -117,7 +117,7 @@ month = now.month
 day = now.day
 hour = now.hour
 minute = now.minute
-now = round((day - 1) + (hour * 60 + minute) / (24 * 60), 2)
+now = round((day - 1) + (hour * 60 + minute) / (24 * 60), 3)
 log.info('Date = {}/{:02d}/{:02d} {:02d}:{:02d}'.format(year,month, day, hour, minute))
 log.info('Now = {0}'.format(now))
 

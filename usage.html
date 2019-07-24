@@ -5,12 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="css/main.css">
   <title>Xfinity Usage</title>
+  <style>
+	body {
+		background-color: #333333;
+		color: #e7e8ea;
+	}
+	text {
+		fill: #e7e8ea;
+	}
+	#usage {
+		font-size: 72px;
+		font-weight: 900;
+		margin-top: -32px;
+	}
+  </style>
 </head>
 <body>
   
   <h1>Xfinity Usage</h1>
   <div class="loading">Loading data<span class="one">.</span><span class="two">.</span><span class="three">.</span></div>
   <div id="gaugeArea"></div>
+  <div id="usage"></div>
+  <div id="now"></div>
   
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script src="https://unpkg.com/gauge-chart@latest/dist/bundle.js"></script>
@@ -20,21 +36,18 @@
 
       $.getJSON('xfinity-usage-grapher.py', function(data) {
 
-        // hide loading
-        $('.loading').hide();
-
         // Element inside which you want to see the chart
         let element = document.querySelector('#gaugeArea')
 
         // Properties of the gauge
         let gaugeOptions = {
           hasNeedle: true,
-          needleColor: '#20639b',
+          needleColor: '#e7e8ea',
           needleUpdateSpeed: 1000,
-          arcColors: [ '#2dc937', '#e7b416', '#cc3232' ],
+          arcColors: [ '#51b54e', '#f7db4d', '#e53639' ],
           arcDelimiters: [ data.warning/data.cap*100, data.error/data.cap*100 ],
           rangeLabel: [ '0', data.cap.toString() ],
-          centralLabel: data.usage + ' GB',
+          //centralLabel: data.usage + ' GB',
           rangeLabelFontSize: 16
         }
 
@@ -42,6 +55,17 @@
         GaugeChart
           .gaugeChart(element, 300, gaugeOptions)
           .updateNeedle(data.usage/data.cap*100)
+
+		// calc date
+		var d = new Date(0);
+		d.setUTCSeconds(data.now);
+		$('#now').html('as of ' + d.toLocaleString());
+
+		// set text
+		$('#usage').html(data.usage + ' GB');
+
+		// hide loading
+		$('.loading').hide();
 
       });
 
