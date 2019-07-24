@@ -7,10 +7,7 @@ import datetime
 from consts import *
 
 # check cache file
-data = None
-if os.path.exists(CACHE_USAGE):
-	data = json.load(open(CACHE_USAGE))
-
+data = utils.loadJson(CACHE_USAGE)
 if not data:
 
 	# get config
@@ -46,8 +43,11 @@ if not data:
 	}
 
 	# write cache
-	with open(CACHE_USAGE, 'w') as f:
-		json.dump(data, f)
+	try:
+		with open(CACHE_USAGE, 'w') as f:
+			json.dump(data, f)
+	except:
+		pass
 
 # echo
 print('Content-Type: application/json')

@@ -21,8 +21,8 @@ def getConfigValue(args, name, default=False):
 		return value
 
 	# if not found look in config
-	config = json.load(open(CONFIG_FILE))
-	if name in config:
+	config = loadJson(CONFIG_FILE)
+	if config and name in config:
 		value = config[name]
 		return value
 
@@ -82,3 +82,25 @@ def sendMail(mailFrom, mailTo, subject, body):
 	except Exception as e:
 		log.error(e)
 		pass
+
+def deleteFile(file):
+	try:
+		os.remove(file)
+		return True
+	except:
+		return False
+
+def loadJson(file):
+	try:
+		return json.load(open(file))
+	except:
+		return None
+
+def saveJson(file, data):
+	try:
+		with open(file, 'w') as f:
+			json.dump(data, f)
+		return True
+	except:
+		return False
+
