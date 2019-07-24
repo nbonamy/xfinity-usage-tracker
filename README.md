@@ -73,9 +73,8 @@ You can use your favorite scheduler (cron or Windows Task Scheduler) to automati
 
 ## Behind a webserver
 Configuring your favorite webserver (Apache or Nginx) is not documented here. You need to run the script as a CGI script.
-As the process can take some time, a waiting page (`index.html`) is provided.
 
-You can also quickly check your usage by accessing `usage.html`. This page should display fine on your phone!
+An index page is provided to nicely display your current usage and provide a link to refresh the data from Xfinity.
 
 <p align="center"><img height="240" src="img/usage.jpg"></p>
 
