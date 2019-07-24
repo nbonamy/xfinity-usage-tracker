@@ -1,6 +1,7 @@
 
 # configuration
 CONFIG_FILE = 'config.json'
+CACHE_USAGE = 'cache/usage.json'
 
 # usage collection
 XFINITY_USER = 'XFINITY_USER'

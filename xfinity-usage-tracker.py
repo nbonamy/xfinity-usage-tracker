@@ -172,5 +172,11 @@ if month != historyMonth:
 log.info('Updating history sheet')
 historySheet.update_cell(day + HIST_START_ROW - 1, HIST_START_COL, usedData)
 
+# delete cache
+try:
+	os.remove(CACHE_USAGE)
+except:
+	pass
+
 # done
 finish(args, usageData, gSheetUrl)
