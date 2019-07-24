@@ -12,7 +12,7 @@ This tool tracks your Xfinity usage and:
  - oauth2client ([https://github.com/googleapis/oauth2client](https://github.com/googleapis/oauth2client))
  - gspread ([https://github.com/burnash/gspread](https://github.com/burnash/gspread))
 
-jantman is the original author of xfinity-usage but xfinity-usage uses a slightly modified version: [https://github.com/nbonamy/xfinity-usage](https://github.com/nbonamy/xfinity-usage).
+jantman is the original author of xfinity-usage but xfinity-usage-tracker uses a slightly modified version: [https://github.com/nbonamy/xfinity-usage](https://github.com/nbonamy/xfinity-usage).
 
 Python dependencies can be installed using
 
