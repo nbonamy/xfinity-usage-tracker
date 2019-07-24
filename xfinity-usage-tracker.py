@@ -65,6 +65,7 @@ xfinityUser = utils.getConfigValue(args, XFINITY_USER)
 xfinityPass = utils.getConfigValue(args, XFINITY_PASS)
 xfinityOffset = int(utils.getConfigValue(args, XFINITY_OFFSET, 0))
 xfinityBrowser = utils.getConfigValue(args, XFINITY_BROWSER, 'chrome-headless')
+dateFormat = utils.getConfigValue(args, DATE_FORMAT, DEFAULT_DATE_FORMAT)
 warnThreshold = utils.getConfigValue(args, XFINITY_WARNING, -1)
 gSheetId = utils.getConfigValue(args, XFINITY_GSHEET)
 gSheetUrl = utils.getGoogleSheetUrl(gSheetId)
@@ -104,6 +105,8 @@ log.info('Monthly cap = {0} GB'.format(capValue))
 
 # get timestamp
 jsonTimestamp = usageData[JSON_NOW]
+execDate = datetime.datetime.fromtimestamp(jsonTimestamp).strftime(dateFormat)
+log.info('Execution date = {0}'.format(execDate))
 
 # offset
 if xfinityOffset != 0:
@@ -112,14 +115,15 @@ if xfinityOffset != 0:
 
 # now get some value
 now = datetime.datetime.fromtimestamp(jsonTimestamp)
+measureDate = now.strftime(dateFormat)
 year = now.year
 month = now.month
 day = now.day
 hour = now.hour
 minute = now.minute
 now = round((day - 1) + (hour * 60 + minute) / (24 * 60), 3)
-log.info('Date = {}/{:02d}/{:02d} {:02d}:{:02d}'.format(year,month, day, hour, minute))
-log.info('Now = {0}'.format(now))
+log.info('Measure Date = {0}'.format(measureDate))
+log.info('Month progress = {0}'.format(now))
 
 # if warning enabled calc target and compare
 days = monthrange(year, month)[1]
@@ -151,6 +155,7 @@ book = utils.openGoogleSheet(gSheetId)
 # update current usage
 log.info('Updating data sheet')
 dataSheet = book.get_worksheet(DATA_SHEET_INDEX)
+dataSheet.update_acell(DATE_CELL, execDate)
 dataSheet.update_acell(NOW_CELL, now)
 dataSheet.update_acell(CAP_CELL, capValue)
 dataSheet.update_acell(USAGE_CELL, usedData)

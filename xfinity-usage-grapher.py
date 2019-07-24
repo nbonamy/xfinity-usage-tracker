@@ -17,24 +17,14 @@ if not data:
 	# update current usage
 	book = utils.openGoogleSheet(gSheetId)
 	dataSheet = book.get_worksheet(0)
-	now = float(dataSheet.acell(NOW_CELL, value_render_option='UNFORMATTED_VALUE').value)
+	date = dataSheet.acell(DATE_CELL).value
 	cap = int(dataSheet.acell(CAP_CELL).value.split()[0])
 	target = int(dataSheet.acell(TARGET_CELL).value.split()[0])
 	usage = int(dataSheet.acell(USAGE_CELL).value.split()[0])
 
-	# translate now back to timestamp
-	today = datetime.datetime.today()
-	today = datetime.datetime(today.year, today.month, today.day)
-	now = math.modf(now)[0] * 24 * 60 * 60
-	now = today.timestamp() + round(now, 0)
-
-	# compensate offset
-	xfinityOffset = int(utils.getConfigValue(None, XFINITY_OFFSET, 0))
-	now = now - xfinityOffset * 60 * 60
-
 	# build data
 	data = {
-		'now': int(now),
+		'date': date,
 		'cap': cap,
 		'usage': usage,
 		'warning': target*GRAPH_WARNING,
@@ -43,11 +33,7 @@ if not data:
 	}
 
 	# write cache
-	try:
-		with open(CACHE_USAGE, 'w') as f:
-			json.dump(data, f)
-	except:
-		pass
+	utils.saveJson(CACHE_USAGE, data)
 
 # echo
 print('Content-Type: application/json')

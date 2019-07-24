@@ -32,6 +32,13 @@
 
 			$.getJSON('xfinity-usage-grapher.py', function(data) {
 
+				// usage
+				$('#usage').html(data.usage + ' GB');
+				$('#usage').attr('href', data.gsheet);
+
+				// date
+				$('#now').html('as of ' + data.date);
+
 				// element inside which you want to see the chart
 				let element = document.querySelector('#gaugeArea')
 
@@ -51,15 +58,6 @@
 				GaugeChart
 					.gaugeChart(element, 300, gaugeOptions)
 					.updateNeedle(data.usage/data.cap*100)
-
-				// calc date
-				var d = new Date(0);
-				d.setUTCSeconds(data.now);
-				$('#now').html('as of ' + d.toLocaleString());
-
-				// set text
-				$('#usage').html(data.usage + ' GB');
-				$('#usage').attr('href', data.gsheet);
 
 				// hide loading
 				$('.loading').hide();
