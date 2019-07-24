@@ -38,35 +38,40 @@
 
 			$.getJSON('xfinity-usage-grapher.py', function(data) {
 
-				// usage
-				$('#usage').html(data.usage + ' GB');
-				$('#usage').attr('href', data.gsheet);
+				// can happen if not google sheet
+				if (data != null) {
 
-				// date
-				$('#date').html('as of ' + data.date);
+					// usage
+					$('#usage').html(data.usage + ' GB');
+					$('#usage').attr('href', data.gsheet);
 
-				// element inside which you want to see the chart
-				let element = document.querySelector('#gaugeArea')
+					// date
+					$('#date').html('as of ' + data.date);
 
-				// properties of the gauge
-				let gaugeOptions = {
-					hasNeedle: true,
-					needleColor: '#e7e8ea',
-					needleUpdateSpeed: 1000,
-					arcColors: [ '#51b54e', '#f7db4d', '#e53639' ],
-					arcDelimiters: [ data.warning/data.cap*100, data.error/data.cap*100 ],
-					rangeLabel: [ '0', data.cap.toString() ],
-					//centralLabel: data.usage + ' GB',
-					rangeLabelFontSize: 16
+					// element inside which you want to see the chart
+					let element = document.querySelector('#gaugeArea')
+
+					// properties of the gauge
+					let gaugeOptions = {
+						hasNeedle: true,
+						needleColor: '#e7e8ea',
+						needleUpdateSpeed: 1000,
+						arcColors: [ '#51b54e', '#f7db4d', '#e53639' ],
+						arcDelimiters: [ data.warning/data.cap*100, data.error/data.cap*100 ],
+						rangeLabel: [ '0', data.cap.toString() ],
+						//centralLabel: data.usage + ' GB',
+						rangeLabelFontSize: 16
+					}
+
+					// draw chart
+					GaugeChart
+						.gaugeChart(element, 300, gaugeOptions)
+						.updateNeedle(data.usage/data.cap*100)
+
+					// resize (hacky)
+					$('svg').attr('height', $('svg').attr('height') - 45);
+
 				}
-
-				// draw chart
-				GaugeChart
-					.gaugeChart(element, 300, gaugeOptions)
-					.updateNeedle(data.usage/data.cap*100)
-
-				// resize (hacky)
-				$('svg').attr('height', $('svg').attr('height') - 45);
 
 				// hide loading
 				$('.loading').hide();
@@ -78,7 +83,7 @@
 				if ($(this).attr('href')) {
 					document.location = $(this).attr('href');
 				}
-			})
+			});
 
 			// update click
 			$('#update').click(function() {
