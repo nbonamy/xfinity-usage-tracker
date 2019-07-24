@@ -70,7 +70,8 @@ Configuring your favorite webserver (Apache or Nginx) is not documented here. Yo
 As the process can take some time, a waiting page (`index.html`) is provided.
 
 You can also quickly check your usage by accessing `usage.html`. This page should display fine on your phone!
-![usage](img/usage.jpg)
+
+<p align="center"><img height="240" src="img/usage.jpg"></p>
 
 ## Logging
 When run from the command line, you can force logging to a file with the `--log` option. When run as a CGI script, logging to file is always enabled.
