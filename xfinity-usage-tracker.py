@@ -1,71 +1,16 @@
 #!/usr/bin/env python3
 import os
 import sys
-import ssl
 import json
 import time
-import gspread
-import smtplib
+import utils
 import datetime
 import argparse
 import webbrowser
 import logging as log
+from consts import *
 from calendar import monthrange
 from xfinity_usage.xfinity_usage import XfinityUsage
-from oauth2client.service_account import ServiceAccountCredentials
-
-# some constants
-CONFIG_FILE = 'config.json'
-XFINITY_USER = 'XFINITY_USER'
-XFINITY_PASS = 'XFINITY_PASS'
-XFINITY_OFFSET = 'XFINITY_OFFSET'
-XFINITY_BROWSER = 'XFINITY_BROWSER'
-XFINITY_GSHEET = 'XFINITY_GSHEET'
-XFINITY_WARNING = 'XFINITY_WARNING'
-XFINITY_SMTP_HOST = 'XFINITY_SMTP_HOST'
-XFINITY_SMTP_PORT = 'XFINITY_SMTP_PORT'
-XFINITY_SMTP_USER = 'XFINITY_SMTP_USER'
-XFINITY_SMTP_PASS = 'XFINITY_SMTP_PASS'
-XFINITY_EMAIL_FROM = 'XFINITY_EMAIL_FROM'
-XFINITY_EMAIL_TO = 'XFINITY_EMAIL_TO'
-SMTP_GMAIL = 'smtp.gmail.com'
-SMTP_PORT = 25
-SMTP_PORT_SSL = 465
-SMTP_PORT_TLS = 587
-JSON_USAGE = 'used'
-JSON_CAP = 'total'
-JSON_NOW = 'data_timestamp'
-GSHEET_SECRET = 'client_secret.json'
-DATA_SHEET_INDEX = 0
-CAP_CELL = 'B2'
-NOW_CELL = 'B5'
-USAGE_CELL = 'B7'
-HIST_SHEET_INDEX = 1
-HIST_MONTH_CELL = 'B1'
-HIST_START_ROW = 4
-HIST_START_COL = 2
-
-# to get configuration
-def getConfigValue(args, name, default=False):
-
-	# first check args
-	if name in vars(args).keys():
-		value = vars(args)[name]
-		if value:
-			return value
-
-	# now environment variable
-	value = os.getenv(name)
-	if value:
-		return value
-
-	# if not found look in config
-	config = json.load(open(CONFIG_FILE))
-	if name in config:
-		value = config[name]
-
-	# fallback to default
-	return value if value else default
 
 def parse_args(argv):
 	p = argparse.ArgumentParser(description='Track Xfinity data usage', prog='xfinity-usage-tracker')
@@ -116,16 +61,16 @@ else:
 	log.basicConfig(level=logLevel)
 
 # get config
-xfinityUser = getConfigValue(args, XFINITY_USER)
-xfinityPass = getConfigValue(args, XFINITY_PASS)
-xfinityOffset = int(getConfigValue(args, XFINITY_OFFSET, 0))
-xfinityBrowser = getConfigValue(args, XFINITY_BROWSER, 'chrome-headless')
-warnThreshold = getConfigValue(args, XFINITY_WARNING)
-gSheetId = getConfigValue(args, XFINITY_GSHEET)
+xfinityUser = utils.getConfigValue(args, XFINITY_USER)
+xfinityPass = utils.getConfigValue(args, XFINITY_PASS)
+xfinityOffset = int(utils.getConfigValue(args, XFINITY_OFFSET, 0))
+xfinityBrowser = utils.getConfigValue(args, XFINITY_BROWSER, 'chrome-headless')
+warnThreshold = utils.getConfigValue(args, XFINITY_WARNING, -1)
+gSheetId = utils.getConfigValue(args, XFINITY_GSHEET)
 gSheetUrl = 'https://docs.google.com/spreadsheets/d/{0}'.format(gSheetId)
 
 # default
-warnThreshold = 0.90 if not warnThreshold else float(warnThreshold)
+warnThreshold = 0.90 if warnThreshold < 0 else float(warnThreshold)
 
 # check
 if not xfinityUser or not xfinityPass:
@@ -172,7 +117,7 @@ month = now.month
 day = now.day
 hour = now.hour
 minute = now.minute
-now = round((day - 1) + (hour * 60 + minute) / (24 * 60), 2)
+now = round((day - 1) + (hour * 60 + minute) / (24 * 60), 3)
 log.info('Date = {}/{:02d}/{:02d} {:02d}:{:02d}'.format(year,month, day, hour, minute))
 log.info('Now = {0}'.format(now))
 
@@ -181,47 +126,18 @@ days = monthrange(year, month)[1]
 targetData = int(capValue) / days * now
 log.info('Current usage = {0}, target = {1}, threshold={2}'.format(usedData, targetData, targetData * warnThreshold))
 if usedData > targetData * warnThreshold:
-	smtpUser = getConfigValue(args, XFINITY_SMTP_USER)
-	warnEmailTo = getConfigValue(args, XFINITY_EMAIL_TO) or smtpUser
+	smtpUser = utils.getConfigValue(args, XFINITY_SMTP_USER)
+	warnEmailTo = utils.getConfigValue(args, XFINITY_EMAIL_TO) or smtpUser
+	warnEmailFrom = utils.getConfigValue(args, XFINITY_EMAIL_FROM) or warnEmailTo
 	if not warnEmailTo:
 		log.warn('Mail disabled: no recipient email setup')
 	else:
-
-		smtpHost = getConfigValue(args, XFINITY_SMTP_HOST) or SMTP_GMAIL if smtpUser.endswith('@gmail.com') else ''
-		if not smtpHost:
-			log.warn('Should warn but SMTP host not defined')
-		else:
-
-			try:
-				# connect to smtp server
-				smtpPort = getConfigValue(args, XFINITY_SMTP_PORT)
-				smtpPort = int(smtpPort) if smtpPort else (SMTP_PORT_SSL if smtpHost == SMTP_GMAIL else SMTP_PORT)
-				log.debug('SMTP: Connecting to server {}:{}'.format(smtpHost, smtpPort))
-				server = smtplib.SMTP_SSL(smtpHost, smtpPort)
-				server.ehlo()
-				if smtpPort == SMTP_PORT_TLS:
-					log.debug('SMTP: Enabling TLS')
-					server.starttls()
-					server.ehlo()
-				if smtpUser:
-					log.debug('SMTP: Authenticating')
-					server.login(smtpUser, getConfigValue(args, XFINITY_SMTP_PASS))
-
-				# build and send email
-				warnEmailFrom = getConfigValue(args, XFINITY_EMAIL_FROM) or warnEmailTo
-				emailText  = 'From: {0}\n'.format(warnEmailFrom)
-				emailText += 'To: {0}\n'.format(warnEmailTo)
-				emailText += 'Subject: Xfinity usage = {0:.0f} GB (target is {1:.0f} GB)\n\n'.format(usedData, targetData)
-				emailText += gSheetUrl if gSheetId else ''
-				server.sendmail(warnEmailFrom, warnEmailTo, emailText)
-
-				# done
-				server.close()
-				log.info('Warning mail sent')
-
-			except Exception as e:
-				log.error(e)
-				pass
+		utils.sendMail(
+			warnEmailFrom,
+			warnEmailTo,
+			'Xfinity usage = {0:.0f} GB (target is {1:.0f} GB)\n\n'.format(usedData, targetData),
+			gSheetUrl if gSheetId else ''
+		)
 
 # if we have no spreadsheet, simply output the json
 if not gSheetId:
@@ -230,13 +146,10 @@ if not gSheetId:
 
 # use creds to create a client to interact with the Google Drive API
 log.info('Connecting to Google spreadsheet')
-scope = ['https://spreadsheets.google.com/feeds']
-creds = ServiceAccountCredentials.from_json_keyfile_name(GSHEET_SECRET, scope)
-client = gspread.authorize(creds)
+book = utils.openGoogleSheet(gSheetId)
 
 # update current usage
 log.info('Updating data sheet')
-book = client.open_by_key(gSheetId)
 dataSheet = book.get_worksheet(DATA_SHEET_INDEX)
 dataSheet.update_acell(NOW_CELL, now)
 dataSheet.update_acell(CAP_CELL, capValue)
@@ -255,9 +168,7 @@ if month != historyMonth:
 		historySheet.update_cell(d + HIST_START_ROW - 1, HIST_START_COL, '')
 	historySheet.update_acell(HIST_MONTH_CELL, month)
 
-# now update daily value if not done yet
-# when run on first day of month this does not make sense as monthly usage has just been reset to 0
-# so we cannot even record usage as of last day of previous month...
+# now update daily value
 log.info('Updating history sheet')
 historySheet.update_cell(day + HIST_START_ROW - 1, HIST_START_COL, usedData)
 
