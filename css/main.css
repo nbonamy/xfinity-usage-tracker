@@ -9,11 +9,14 @@ body {
 
 a {
 	color: #e7e8ea;
-	text-decoration: none;
 }
 
 text {
 	fill: #e7e8ea;
+}
+
+.hidden {
+	display: none;
 }
 
 @media only screen and (max-width:640px) {
@@ -23,21 +26,21 @@ text {
 	}
 }
 
-.loading .one {
+.progress .one {
 	opacity: 0;
 	-webkit-animation: dot 1.3s infinite;
 	-webkit-animation-delay: 0.0s;
 	animation: dot 1.3s infinite;
 	animation-delay: 0.0s;
 }
-.loading .two {
+.progress .two {
 	opacity: 0;
 	-webkit-animation: dot 1.3s infinite;
 	-webkit-animation-delay: 0.2s;
 	animation: dot 1.3s infinite;
 	animation-delay: 0.2s;
 }
-.loading .three {
+.progress .three {
 	opacity: 0;
 	-webkit-animation: dot 1.3s infinite;
 	-webkit-animation-delay: 0.3s;
