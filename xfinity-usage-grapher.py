@@ -7,6 +7,7 @@ from consts import *
 
 # get config
 gSheetId = utils.getConfigValue(None, XFINITY_GSHEET)
+gSheetUrl = utils.getGoogleSheetUrl(gSheetId)
 
 # update current usage
 book = utils.openGoogleSheet(gSheetId)
@@ -34,5 +35,6 @@ print(json.dumps({
 	'cap': cap,
 	'usage': usage,
 	'warning': target*GRAPH_WARNING,
-	'error': target
+	'error': target,
+	'gsheet': gSheetUrl
 }))

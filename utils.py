@@ -29,6 +29,10 @@ def getConfigValue(args, name, default=False):
 	# fallback to default
 	return default
 
+# get google sheer url
+def getGoogleSheetUrl(sheetId):
+	return 'https://docs.google.com/spreadsheets/d/{0}'.format(sheetId)
+
 # to open a google sheet
 def openGoogleSheet(sheetId):
 

@@ -17,6 +17,11 @@
 			font-size: 72px;
 			font-weight: 900;
 			margin-top: -32px;
+			cursor: pointer;
+		}
+		a {
+			color: #e7e8ea;
+			text-decoration: none;
 		}
 	</style>
 </head>
@@ -26,7 +31,7 @@
 	<div class="loading">Loading data<span class="one">.</span><span class="two">.</span><span class="three">.</span></div>
 	<div id="gaugeArea"></div>
 	<div id="usage"></div>
-	<div id="now"></div>
+	<div><a href="index.html"><span id="now"></span></a></div>
 
 	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 	<script src="https://unpkg.com/gauge-chart@latest/dist/bundle.js"></script>
@@ -36,10 +41,10 @@
 
 			$.getJSON('xfinity-usage-grapher.py', function(data) {
 
-				// Element inside which you want to see the chart
+				// element inside which you want to see the chart
 				let element = document.querySelector('#gaugeArea')
 
-				// Properties of the gauge
+				// properties of the gauge
 				let gaugeOptions = {
 					hasNeedle: true,
 					needleColor: '#e7e8ea',
@@ -51,7 +56,7 @@
 					rangeLabelFontSize: 16
 				}
 
-				// Drawing and updating the chart
+				// draw chart
 				GaugeChart
 					.gaugeChart(element, 300, gaugeOptions)
 					.updateNeedle(data.usage/data.cap*100)
@@ -63,11 +68,19 @@
 
 				// set text
 				$('#usage').html(data.usage + ' GB');
+				$('#usage').attr('href', data.gsheet);
 
 				// hide loading
 				$('.loading').hide();
 
 			});
+
+			// usage click
+			$('#usage').click(function() {
+				if ($(this).attr('href')) {
+					document.location = $(this).attr('href');
+				}
+			})
 
 		});
 	</script>

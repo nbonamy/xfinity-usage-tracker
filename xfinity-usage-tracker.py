@@ -67,7 +67,7 @@ xfinityOffset = int(utils.getConfigValue(args, XFINITY_OFFSET, 0))
 xfinityBrowser = utils.getConfigValue(args, XFINITY_BROWSER, 'chrome-headless')
 warnThreshold = utils.getConfigValue(args, XFINITY_WARNING, -1)
 gSheetId = utils.getConfigValue(args, XFINITY_GSHEET)
-gSheetUrl = 'https://docs.google.com/spreadsheets/d/{0}'.format(gSheetId)
+gSheetUrl = utils.getGoogleSheetUrl(gSheetId)
 
 # default
 warnThreshold = 0.90 if warnThreshold < 0 else float(warnThreshold)
