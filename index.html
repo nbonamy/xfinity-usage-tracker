@@ -2,13 +2,97 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<meta http-equiv="refresh" content="0; url=xfinity-usage-tracker.py">
-	<link rel="shortcut icon" href="https://static.cimcontent.net/common-web-assets/favicon/favicon.ico">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
-	<title>Xfinity Usage Collector</title>
+	<link rel="apple-touch-icon" href="img/apple-icon-512x512.png">
+	<link rel="shortcut icon" type="image/png" sizes="96x96" href="img/favicon-96x96.png">
+	<title>Xfinity Usage</title>
+	<style>
+		#usage {
+			font-size: 72px;
+			font-weight: 900;
+			cursor: pointer;
+		}
+		#update {
+			margin-top: 32px;
+		}
+	</style>
 </head>
 <body>
-	<h2>Getting data from Xfinity</h2>
-	<div class="loading">This can take some time<span class="one">.</span><span class="two">.</span><span class="three">.</span></div>
+
+	<h1>Xfinity Usage</h1>
+	<div class="progress loading ">Loading data<span class="one">.</span><span class="two">.</span><span class="three">.</span></div>
+	<div id="gaugeArea"></div>
+	<div id="usage"></div>
+	<div id="date"></div>
+	<div id="update">
+		<a href="xfinity-usage-tracker.py">Update usage from Xfinity</a>
+		<div class="progress updating hidden">This can take some time<span class="one">.</span><span class="two">.</span><span class="three">.</span></div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script src="https://unpkg.com/gauge-chart@latest/dist/bundle.js"></script>
+	<script>
+
+		$(document).ready(function() {
+
+			$.getJSON('xfinity-usage-grapher.py', function(data) {
+
+				// can happen if not google sheet
+				if (data != null) {
+
+					// usage
+					$('#usage').html(data.usage + ' GB');
+					$('#usage').attr('href', data.gsheet);
+
+					// date
+					$('#date').html('as of ' + data.date);
+
+					// element inside which you want to see the chart
+					let element = document.querySelector('#gaugeArea')
+
+					// properties of the gauge
+					let gaugeOptions = {
+						hasNeedle: true,
+						needleColor: '#e7e8ea',
+						needleUpdateSpeed: 1000,
+						arcColors: [ '#51b54e', '#f7db4d', '#e53639' ],
+						arcDelimiters: [ data.warning/data.cap*100, data.error/data.cap*100 ],
+						rangeLabel: [ '0', data.cap.toString() ],
+						//centralLabel: data.usage + ' GB',
+						rangeLabelFontSize: 16
+					}
+
+					// draw chart
+					GaugeChart
+						.gaugeChart(element, 300, gaugeOptions)
+						.updateNeedle(data.usage/data.cap*100)
+
+					// resize (hacky)
+					$('svg').attr('height', $('svg').attr('height') - 45);
+
+				}
+
+				// hide loading
+				$('.loading').hide();
+
+			});
+
+			// usage click
+			$('#usage').click(function() {
+				if ($(this).attr('href')) {
+					document.location = $(this).attr('href');
+				}
+			});
+
+			// update click
+			$('#update').click(function() {
+				$('#update a').hide();
+				$('.updating').show();
+				return true;
+			});
+
+		});
+	</script>
 </body>
 </html>

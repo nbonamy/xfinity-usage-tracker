@@ -10,30 +10,35 @@ from consts import *
 data = utils.loadJson(CACHE_USAGE)
 if not data:
 
-	# get config
-	gSheetId = utils.getConfigValue(None, XFINITY_GSHEET)
-	gSheetUrl = utils.getGoogleSheetUrl(gSheetId)
+	try:
 
-	# update current usage
-	book = utils.openGoogleSheet(gSheetId)
-	dataSheet = book.get_worksheet(0)
-	date = dataSheet.acell(DATE_CELL).value
-	cap = int(dataSheet.acell(CAP_CELL).value.split()[0])
-	target = int(dataSheet.acell(TARGET_CELL).value.split()[0])
-	usage = int(dataSheet.acell(USAGE_CELL).value.split()[0])
+		# get config
+		gSheetId = utils.getConfigValue(None, XFINITY_GSHEET)
+		gSheetUrl = utils.getGoogleSheetUrl(gSheetId)
 
-	# build data
-	data = {
-		'date': date,
-		'cap': cap,
-		'usage': usage,
-		'warning': target*GRAPH_WARNING,
-		'error': target,
-		'gsheet': gSheetUrl
-	}
+		# update current usage
+		book = utils.openGoogleSheet(gSheetId)
+		dataSheet = book.get_worksheet(0)
+		date = dataSheet.acell(DATE_CELL).value
+		cap = int(dataSheet.acell(CAP_CELL).value.split()[0])
+		target = int(dataSheet.acell(TARGET_CELL).value.split()[0])
+		usage = int(dataSheet.acell(USAGE_CELL).value.split()[0])
 
-	# write cache
-	utils.saveJson(CACHE_USAGE, data)
+		# build data
+		data = {
+			'date': date,
+			'cap': cap,
+			'usage': usage,
+			'warning': target*GRAPH_WARNING,
+			'error': target,
+			'gsheet': gSheetUrl
+		}
+
+		# write cache
+		utils.saveJson(CACHE_USAGE, data)
+
+	except:
+		data = None
 
 # echo
 print('Content-Type: application/json')

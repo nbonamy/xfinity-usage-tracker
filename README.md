@@ -6,7 +6,7 @@ This tool tracks your Xfinity usage and:
 
 ## Requirements
 
- - Python3
+ - Python 3 (not tested with Python 2 but may work)
  - Chromedriver ([http://chromedriver.chromium.org/](http://chromedriver.chromium.org/))
  - xfinity-usage ([https://github.com/jantman/xfinity-usage](https://github.com/jantman/xfinity-usage))
  - oauth2client ([https://github.com/googleapis/oauth2client](https://github.com/googleapis/oauth2client))
@@ -63,6 +63,10 @@ You then need then to enable API access to this copy. Please follow the instruct
 Once this is done, you need to define the following configuration:
 
  - `XFINITY_GSHEET`: id of your Google spreadsheet. You can extract that from the URL displayed by your browser when you view the file. If the URL is `https://docs.google.com/spreadsheets/d/abcd8673ef/edit#gid=0` then the ID is `abcd8673ef`.
+ 
+You can also override the date format used:
+
+ - `DATE_FORMAT`: use standard flags as described in [https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior](https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior). The default format is `%d/%m/%Y %H:%M`.
 
 Usage data can be archived: at the beginning of each month, the detailed usage data will be copied to a new spreadsheet. This is disabled by default but you can enable it by setting the `XFINITY_SAVE_HISTORY` configuration value to `true`.
 
@@ -71,9 +75,8 @@ You can use your favorite scheduler (cron or Windows Task Scheduler) to automati
 
 ## Behind a webserver
 Configuring your favorite webserver (Apache or Nginx) is not documented here. You need to run the script as a CGI script.
-As the process can take some time, a waiting page (`index.html`) is provided.
 
-You can also quickly check your usage by accessing `usage.html`. This page should display fine on your phone!
+An index page is provided to nicely display your current usage and provide a link to refresh the data from Xfinity.
 
 <p align="center"><img height="240" src="img/usage.jpg"></p>
 
