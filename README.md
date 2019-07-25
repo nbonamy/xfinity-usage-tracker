@@ -66,7 +66,7 @@ Once this is done, you need to define the following configuration:
  
 You can also override the date format used:
 
- - `DATE_FORMAT`: use standard flags as described in [https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior](https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior)
+ - `DATE_FORMAT`: use standard flags as described in [https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior](https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior). The default format is `%d/%m/%Y %H:%M`.
 
 ## Scheduling
 You can use your favorite scheduler (cron or Windows Task Scheduler) to automatically launch the script. If you want to track usage for each calendar day, then at least schedule it to run at 11.55pm (although there is some delay in Comcast update of your usage). It is recommended to run it only once a day: if you decide to run it more often, please check the disclaimer on [https://github.com/jantman/xfinity-usage](https://github.com/jantman/xfinity-usage): it is also valid for xfinity-usage-tracker.
