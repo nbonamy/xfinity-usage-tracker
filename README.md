@@ -64,6 +64,8 @@ Once this is done, you need to define the following configuration:
 
  - `XFINITY_GSHEET`: id of your Google spreadsheet. You can extract that from the URL displayed by your browser when you view the file. If the URL is `https://docs.google.com/spreadsheets/d/abcd8673ef/edit#gid=0` then the ID is `abcd8673ef`.
 
+Usage data can be archived: at the beginning of each month, the detailed usage data will be copied to a new spreadsheet. This is disabled by default but you can enable it by setting the `XFINITY_SAVE_HISTORY` configuration value to `true`.
+
 ## Scheduling
 You can use your favorite scheduler (cron or Windows Task Scheduler) to automatically launch the script. If you want to track usage for each calendar day, then at least schedule it to run at 11.55pm (although there is some delay in Comcast update of your usage). It is recommended to run it only once a day: if you decide to run it more often, please check the disclaimer on [https://github.com/jantman/xfinity-usage](https://github.com/jantman/xfinity-usage): it is also valid for xfinity-usage-tracker.
 

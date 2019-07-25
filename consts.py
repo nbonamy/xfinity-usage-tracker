@@ -30,6 +30,7 @@ SMTP_PORT_TLS = 587
 
 # google sheet access
 XFINITY_GSHEET = 'XFINITY_GSHEET'
+XFINITY_SAVE_HISTORY = 'XFINITY_SAVE_HISTORY'
 GSHEET_SECRET = 'client_secret.json'
 
 # google sheet structure

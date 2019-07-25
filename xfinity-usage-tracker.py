@@ -167,8 +167,16 @@ historySheet = book.get_worksheet(HIST_SHEET_INDEX)
 historyMonth = int(historySheet.acell(HIST_MONTH_CELL).value)
 log.debug('Spreadsheet month history = {}'.format(historyMonth))
 if month != historyMonth:
-	log.info('Clearing previous month history')
+
+	# copy or not
+	if utils.getConfigValue(args, XFINITY_SAVE_HISTORY, False):
+		log.info('Saving previous month history')
+		year = year-1 if historyMonth == 12 else year
+		title = 'History {:02d}/{:02d}'.format(historyMonth, year-int(year/100)*100)
+		book.duplicate_sheet(historySheet.id, HIST_SHEET_INDEX+1, new_sheet_name=title)
+
 	# clear previous month history
+	log.info('Clearing previous month history')
 	for d in range(1,32):
 		historySheet.update_cell(d + HIST_START_ROW - 1, HIST_START_COL, '')
 	historySheet.update_acell(HIST_MONTH_CELL, month)
