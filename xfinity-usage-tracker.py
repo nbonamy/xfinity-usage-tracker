@@ -170,10 +170,16 @@ if month != historyMonth:
 
 	# copy or not
 	if utils.getConfigValue(args, XFINITY_SAVE_HISTORY, False):
-		log.info('Saving previous month history')
+		log.info('Archiving previous month history')
 		year = year-1 if historyMonth == 12 else year
 		title = 'History {:02d}/{:02d}'.format(historyMonth, year-int(year/100)*100)
 		book.duplicate_sheet(historySheet.id, HIST_SHEET_INDEX+1, new_sheet_name=title)
+
+		# now freeze values
+		log.info('Freezing values in archive')
+		archiveSheet = book.get_worksheet(HIST_SHEET_INDEX+1)
+		historyCells = archiveSheet.range(HIST_START_ROW, HIST_START_COL-1, HIST_START_ROW+31-1, HIST_END_COL)
+		archiveSheet.update_cells(historyCells, value_input_option='USER_ENTERED')
 
 	# clear previous month history
 	log.info('Clearing previous month history')

@@ -44,6 +44,7 @@ HIST_SHEET_INDEX = 1
 HIST_MONTH_CELL = 'B1'
 HIST_START_ROW = 4
 HIST_START_COL = 2
+HIST_END_COL = 6
 
 # graph stuff
 TMPL_FILE = 'tmpl/graph.tmpl'
