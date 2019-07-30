@@ -23,13 +23,15 @@ if not data:
 		cap = int(dataSheet.acell(CAP_CELL).value.split()[0])
 		target = int(dataSheet.acell(TARGET_CELL).value.split()[0])
 		usage = int(dataSheet.acell(USAGE_CELL).value.split()[0])
+		today = int(dataSheet.acell(TODAY_CELL).value.split()[0])
 
 		# build data
 		data = {
 			'date': date,
 			'cap': cap,
 			'usage': usage,
-			'warning': target*GRAPH_WARNING,
+			'today': today,
+			'warning': int(target*GRAPH_WARNING),
 			'error': target,
 			'gsheet': gSheetUrl
 		}
