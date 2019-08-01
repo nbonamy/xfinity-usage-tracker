@@ -178,11 +178,11 @@ if day == 1:
 		usageMonths = usageData[JSON_DETAILS][JSON_HISTORY]
 		prevMonthUsage = int(usageMonths[len(usageMonths)-1-1][JSON_HIST_USAGE])
 		historySheet.update_cell(prevMonthDays + HIST_START_ROW - 1, HIST_START_COL, prevMonthUsage)
-		log.info('Updating previous month last day usage: {}'.format(prevMonthUsage))
+		log.info('Updating previous month last day usage: {0}'.format(prevMonthUsage))
 
 # check month
 historyMonth = int(historySheet.acell(HIST_MONTH_CELL).value)
-log.debug('Spreadsheet month history = {}'.format(historyMonth))
+log.debug('Spreadsheet month history = {0}'.format(historyMonth))
 if month != historyMonth:
 
 	# copy or not
