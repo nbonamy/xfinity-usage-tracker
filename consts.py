@@ -14,6 +14,9 @@ DATE_FORMAT = 'DATE_FORMAT'
 JSON_USAGE = 'used'
 JSON_CAP = 'total'
 JSON_NOW = 'data_timestamp'
+JSON_DETAILS = 'raw'
+JSON_HISTORY = 'usageMonths'
+JSON_HIST_USAGE = 'totalUsage'
 
 # mail warning configuration
 XFINITY_WARNING = 'XFINITY_WARNING'
