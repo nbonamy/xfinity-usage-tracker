@@ -163,27 +163,27 @@ dataSheet.update_acell(USAGE_CELL, usedData)
 # update history
 historySheet = book.get_worksheet(HIST_SHEET_INDEX)
 
-# if 1st of month
-if day == 1:
-
-	# get previous month
-	log.debug('1st day of month: checking previous month final number')
-	prevYear = year if month > 1 else year - 1  
-	prevMonth = month if month > 1 else 12
-	prevMonthDays = monthrange(prevYear, prevMonth)[1]
-	prevHistUsage = historySheet.cell(prevMonthDays + HIST_START_ROW - 1, HIST_START_COL).value
-	if prevHistUsage:
-		log.debug('Previous month last day already has data. Not updating.')
-	else:
-		usageMonths = usageData[JSON_DETAILS][JSON_HISTORY]
-		prevMonthUsage = int(usageMonths[len(usageMonths)-1-1][JSON_HIST_USAGE])
-		historySheet.update_cell(prevMonthDays + HIST_START_ROW - 1, HIST_START_COL, prevMonthUsage)
-		log.info('Updating previous month last day usage: {0}'.format(prevMonthUsage))
-
 # check month
 historyMonth = int(historySheet.acell(HIST_MONTH_CELL).value)
 log.debug('Spreadsheet month history = {0}'.format(historyMonth))
 if month != historyMonth:
+
+	# if 1st of month
+	if day == 1:
+
+		# get previous month
+		log.debug('1st day of month: checking previous month final number')
+		prevYear = year if month > 1 else year - 1
+		prevMonth = month if month > 1 else 12
+		prevMonthDays = monthrange(prevYear, prevMonth)[1]
+		prevHistUsage = historySheet.cell(prevMonthDays + HIST_START_ROW - 1, HIST_START_COL).value
+		if prevHistUsage:
+			log.debug('Previous month last day already has data. Not updating.')
+		else:
+			usageMonths = usageData[JSON_DETAILS][JSON_HISTORY]
+			prevMonthUsage = int(usageMonths[len(usageMonths)-1-1][JSON_HIST_USAGE])
+			historySheet.update_cell(prevMonthDays + HIST_START_ROW - 1, HIST_START_COL, prevMonthUsage)
+			log.info('Updating previous month last day usage: {0}'.format(prevMonthUsage))
 
 	# copy or not
 	if utils.getConfigValue(args, XFINITY_SAVE_HISTORY, False):
