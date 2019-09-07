@@ -28,10 +28,11 @@ def finish(args, usageData, sheetUrl):
 
 	# cgi requires header
 	if isCgi:
-		print('Status: 200 OK')
 		if args.json:
+			print('Status: 200 OK')
 			print('Content-Type: application/json')
 		elif sheetUrl:
+			print('Status: 302 Found')
 			print('Location: index.html')
 		print()
 
