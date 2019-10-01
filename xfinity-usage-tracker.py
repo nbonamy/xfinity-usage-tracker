@@ -93,6 +93,7 @@ if not xfinityUser or not xfinityPass:
 log.info('Getting usage data from xfinity')
 #usageData = { JSON_CAP: 1024, JSON_USAGE: 482, JSON_NOW: int(time.time()) }
 #usageData = json.load(open('data/sample.json'))
+#usageData = json.load(open('data/sample-1st.json'))
 xfinityUsage = XfinityUsage(xfinityUser, xfinityPass, browser_name=xfinityBrowser)
 usageData = xfinityUsage.run()
 
@@ -175,7 +176,7 @@ if month != historyMonth:
 		# get previous month
 		log.debug('1st day of month: checking previous month final number')
 		prevYear = year if month > 1 else year - 1
-		prevMonth = month if month > 1 else 12
+		prevMonth = month-1 if month > 1 else 12
 		prevMonthDays = monthrange(prevYear, prevMonth)[1]
 		prevHistUsage = historySheet.cell(prevMonthDays + HIST_START_ROW - 1, HIST_START_COL).value
 		if prevHistUsage:
